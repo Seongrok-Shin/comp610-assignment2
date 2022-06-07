@@ -5,12 +5,26 @@
  */
 package Question1;
 
+import java.io.*;
+
 /**
  *
  * @author ssr7324
  * @param <E>
  */
-public class FileSorter<E> {
-    private int limit;
-    private 
+
+public class FileSorter<E>{
+    private int limit; 
+    private LinkedQueue<File> input;
+    private LinkedQueue<File> output;
+    
+    public FileSorter(int limit){
+        this.limit = limit;
+        this.input = new LinkedQueue<>();
+        this.output = new LinkedQueue<>();
+    }
+    
+    public void setLimit(int limit){
+        this.limit = limit;
+    }
 }
