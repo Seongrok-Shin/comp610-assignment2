@@ -20,6 +20,10 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import java.io.IOException;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,11 +40,12 @@ public class FileSorterGUI {
     private FileSorter fileSorter;
     private int numOfItemInQueue;
     private Font font;
+    private File file;
 
     public FileSorterGUI() {
         numOfItemInQueue = 0;
-        fileSorter = new FileSorter(0);
-        
+        fileSorter = new FileSorter();
+        file = new File("");
         jFrame = new JFrame("File Sorter");
         jFrame.setSize(400, 400);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -86,12 +91,7 @@ public class FileSorterGUI {
         processButton.addActionListener(new ProcessButtonListener());
         enqueueButton = new JButton("Enqueue Task");
         enqueueButton.setFont(font);
-        enqueueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
+        enqueueButton.addActionListener(new EnqueueButtonListener());
 
         jPanel.add(numOfItem, generateNewConstraints(0, 0, 1, 1));
         jPanel.add(maxString, generateNewConstraints(0, 1, 1, 1));
@@ -136,18 +136,29 @@ public class FileSorterGUI {
         public void actionPerformed(ActionEvent e) {
             inputFileChooser = new JFileChooser();
             input = inputFileChooser.showOpenDialog(null);
-            if(maxStringTextField.getText().length() <= 0){
+
+            if (maxStringTextField.getText().length() <= 0) {
                 JOptionPane.showMessageDialog(null, "You should set the max number of string");
-            } else if (numOfItemInQueue > 0){
+            } else if (numOfItemInQueue > 0) {
                 fileSorter.setLimit(Integer.parseInt(maxStringTextField.getText()));
                 mergeBar.setValue(0);
                 splitBar.setValue(0);
-                
+
+                try {
+                    fileSorter.split(file, splitBar);
+                    splitBar.setValue(fileSorter.splitProgress);
+                } catch (IOException ex) {
+                    Logger.getLogger(FileSorterGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                JOptionPane.showMessageDialog(null, "Done!");
+
+                numOfItemInQueue--;
             }
         }
     }
 
-    private class enqueueButtonListener implements ActionListener {
+    private class EnqueueButtonListener implements ActionListener {
 
         JFileChooser enqueueFileChooser;
         int enqueue;
@@ -156,10 +167,21 @@ public class FileSorterGUI {
         public void actionPerformed(ActionEvent e) {
             enqueueFileChooser = new JFileChooser();
             enqueue = enqueueFileChooser.showOpenDialog(null);
-            if(enqueue != JFileChooser.APPROVE_OPTION){
+            JFileChooser outputFileChooser = new JFileChooser();
+            int output = outputFileChooser.showOpenDialog(null);
+
+            if (enqueue != JFileChooser.APPROVE_OPTION) {
                 return;
             }
-            
+
+            if (output == JFileChooser.APPROVE_OPTION
+                    && enqueue == JFileChooser.APPROVE_OPTION) {
+                File enqueueFile = new File(enqueueFileChooser.getSelectedFile().getAbsolutePath());
+                File outputFile = new File(outputFileChooser.getSelectedFile().getAbsolutePath());
+
+                numOfItemInQueue++;
+                numOfItem.setText("How many items in Queue? " + numOfItemInQueue);
+            }
         }
     }
 }
