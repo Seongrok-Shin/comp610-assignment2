@@ -181,6 +181,7 @@ public class FileSorterGUI {
 
                 numOfItemInQueue++;
                 numOfItem.setText("How many items in Queue? " + numOfItemInQueue);
+                inputName.setText(inputFile.getName());
             }
         }
     }
