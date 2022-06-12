@@ -5,6 +5,10 @@
  */
 package Question3;
 
+import java.util.AbstractSet;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -12,7 +16,7 @@ import java.util.Objects;
  * @author ssr7324
  * @param <E>
  */
-public class HashSetWithChaining<E> {
+public class HashSetWithChaining<E> extends AbstractSet<E> {
 
     class Node<E> {
 
@@ -34,7 +38,7 @@ public class HashSetWithChaining<E> {
     private int size;
 
     public HashSetWithChaining() {
-        table = (Node<E>[]) new Node[INITIAL_CAPACITY];
+        table = new Node[INITIAL_CAPACITY];
         size = 0;
     }
 
@@ -52,6 +56,7 @@ public class HashSetWithChaining<E> {
         return Objects.hashCode(key);
     }
 
+    @Override
     public boolean add(E e) {
         return add(hash(e), e) == null;
     }
@@ -153,6 +158,7 @@ public class HashSetWithChaining<E> {
         }
     }
 
+    @Override
     public boolean contains(Object o) {
         int index = hash(o) % table.length;
 
@@ -169,15 +175,18 @@ public class HashSetWithChaining<E> {
 
         return false;
     }
-
+    
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
+    @Override
     public void clear() {
         if (Objects.nonNull(table) && size > 0) {
             for (int i = 0; i < table.length; i++) {
@@ -187,6 +196,38 @@ public class HashSetWithChaining<E> {
         }
     }
 
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        for (Object o : c) {
+            if (!contains(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> c) {
+        for (E e : c) {
+            if (!add(e)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    @Override
+    public Object[] toArray(){
+        return table;
+    }
+    
+    @Override
+    public Iterator<E> iterator() {
+        return (Iterator<E>) Arrays.stream(table).iterator();
+    }
+
+    
+    
     @Override
     public String toString() {
         String output = "";

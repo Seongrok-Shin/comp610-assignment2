@@ -5,16 +5,38 @@
  */
 package Question2;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  *
  * @author ssr7324
  */
 public class Trie {
 
+    private class TrieNode {
+
+        private final Map<String, TrieNode> children = new HashMap<>();
+        private boolean isLeaf;
+
+        public Map<String, TrieNode> getChildren() {
+            return children;
+        }
+
+        public boolean isLeaf() {
+            return isLeaf;
+        }
+
+        public void setLeaf(boolean leaf) {
+            isLeaf = leaf;
+        }
+    }
+
     TrieNode root;
 
     public Trie() {
-        root = new Trie();
+        root = new TrieNode();
     }
 
     @Override
@@ -43,4 +65,5 @@ public class Trie {
         }
         return levelString;
     }
+
 }
